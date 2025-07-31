@@ -119,6 +119,7 @@ multi_rag/
 
 1. **硅基流动云API（推荐，开箱即用）**
    - 多模态模型：如 Qwen/Qwen2.5-VL-32B-Instruct，API地址见 [硅基流动云平台](https://cloud.siliconflow.cn/i/FcjKykMn)
+   - 图片视觉分析能力：pipeline_all.py 支持自动为图片补全caption，默认调用硅基流动Qwen/Qwen2.5-VL-32B-Instruct模型（无需本地部署，API Key见.env的GUIJI_API_KEY）。如需关闭图片caption补全，可在代码中设置 enable_image_caption=False。
    - Embedding模型：如 BAAI/bge-m3、重排序模型 BAAI/bge-reranker-v2-m3，均可免费调用
    - 只需在 `.env` 中配置 GUIJI_API_KEY、GUIJI_BASE_URL、GUIJI_TEXT_MODEL、GUIJI_FREE_TEXT_MODEL、LOCAL_EMBEDDING_MODEL 等参数即可
 

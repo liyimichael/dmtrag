@@ -23,6 +23,28 @@
 | output/ | 其他输出文件目录 |
 
 
+## 其他PDF解析方案：fitz（PyMuPDF）方案
+
+本项目也支持使用 `fitz`（PyMuPDF）库进行PDF文本解析，作为MinerU之外的另一种可选方案。
+
+- 相关脚本：`fitz_pipeline_all.py`
+- 依赖安装：
+  ```sh
+  pip install pymupdf
+  ```
+- 用法说明：
+  运行 `fitz_pipeline_all.py` 可直接遍历 `datas/` 目录下所有PDF文件，按页提取文本并生成 `all_pdf_page_chunks.json`，适用于纯文本型PDF的快速解析。
+  ```sh
+  python fitz_pipeline_all.py
+  ```
+- 适用场景：
+  - 仅需提取PDF文本内容、无需复杂版面结构还原时可选用此方案。
+  - 适合大批量、纯文本PDF的快速处理。
+  - 若需表格/图片/复杂结构还原，建议优先使用MinerU方案。
+
+> 注：fitz方案无需依赖GPU，适合轻量级场景。
+
+
 ## 数据准备
 
 ### datas目录内容说明

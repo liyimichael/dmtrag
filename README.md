@@ -27,8 +27,9 @@
 
 ### 运行前（初始目录结构）
 
+
 ```
-multi_rag/
+spark_multi_rag/
 ├── pipeline_all.py
 ├── rag_from_page_chunks.py
 ├── get_text_embedding.py
@@ -42,8 +43,9 @@ multi_rag/
 
 ### 运行后（自动生成的中间及输出文件）
 
+
 ```
-multi_rag/
+spark_multi_rag/
 ├── data_base_json_content/         # PDF解析后的内容列表（中间结果，含json）
 ├── data_base_json_page_content/    # 分页内容（中间结果，含json）
 ├── all_pdf_page_chunks.json        # 合并后的所有分页内容（最终json）
@@ -91,14 +93,19 @@ multi_rag/
 
 3. **环境变量配置**
 
+
    请在 `.env` 文件中配置以下内容（示例）：
    ```env
+   # 本地推理（推荐本地部署时使用）
    LOCAL_API_KEY=anything
    LOCAL_BASE_URL=http://localhost:10002/v1
    LOCAL_TEXT_MODEL=qwen3           # 本地大模型，推荐 qwen3
    LOCAL_EMBEDDING_MODEL=bge-m3     # 本地embedding模型，推荐 bge-m3
+   
+   # 你也可以直接将 LOCAL_API_KEY、LOCAL_BASE_URL、LOCAL_TEXT_MODEL、LOCAL_EMBEDDING_MODEL
+   # 换成硅基流动平台的API参数（如GUIJI_API_KEY、GUIJI_BASE_URL、Qwen/Qwen2.5-VL-32B-Instruct等），无需本地部署也可直接运行。
    ```
-   > 推荐在A6000等高性能显卡环境下本地部署上述模型，确保推理效率。
+   > 推荐在A6000等高性能显卡环境下本地部署上述模型，确保推理效率。如无本地环境，也可直接用硅基流动API参数兼容运行。
 
 
 ## 硬件资源建议
@@ -117,13 +124,13 @@ multi_rag/
 
 本项目支持多模态大模型推理，推荐如下两种方式：
 
-1. **硅基流动云API（推荐，开箱即用）**
+1. **硅基流动云API**
    - 多模态模型：如 Qwen/Qwen2.5-VL-32B-Instruct，API地址见 [硅基流动云平台](https://cloud.siliconflow.cn/i/FcjKykMn)
    - 图片视觉分析能力：pipeline_all.py 支持自动为图片补全caption，默认调用硅基流动Qwen/Qwen2.5-VL-32B-Instruct模型（无需本地部署，API Key见.env的GUIJI_API_KEY）。如需关闭图片caption补全，可在代码中设置 enable_image_caption=False。
    - Embedding模型：如 BAAI/bge-m3、重排序模型 BAAI/bge-reranker-v2-m3，均可免费调用
    - 只需在 `.env` 中配置 GUIJI_API_KEY、GUIJI_BASE_URL、GUIJI_TEXT_MODEL、GUIJI_FREE_TEXT_MODEL、LOCAL_EMBEDDING_MODEL 等参数即可
 
-2. **本地xinference统一部署（高性能/隐私需求）**
+2. **本地xinference统一部署**
    - 支持本地多模态模型、embedding模型、mineru等一站式推理
    - 推荐A6000等高性能显卡环境
    - 参考 [xinference官方文档](https://inference.readthedocs.io/en/latest/) 部署

@@ -96,33 +96,42 @@ datas/
 
 ## 目录结构说明
 
-### 运行前（初始目录结构）
 
-
-```
-spark_multi_rag/
-├── pipeline_all.py
-├── rag_from_page_chunks.py
-├── get_text_embedding.py
-├── extract_json_array.py
-├── .env
-├── datas/                # 存放原始PDF和测试集
-├── caches/               # 预留目录（可选）
-├── output/               # 其他输出文件目录
-└── ...
-```
-
-### 运行后（自动生成的中间及输出文件）
-
+### 推荐目录结构
 
 ```
-spark_multi_rag/
-├── data_base_json_content/         # PDF解析后的内容列表（中间结果，含json）
-├── data_base_json_page_content/    # 分页内容（中间结果，含json）
-├── all_pdf_page_chunks.json        # 合并后的所有分页内容（最终json）
-├── output/*.json                   # 其他输出json
-└── ...
+multi_rag/
+├── all_pdf_page_chunks.json                # 所有PDF分页内容合并结果
+├── caches/                                # 缓存目录（如sqlite等）
+│   └── cache.db
+├── data_base_json_content/                # PDF解析后的内容（按文档）
+├── data_base_json_page_content/           # PDF分页内容（按文档）
+├── datas/                                 # 原始PDF及测试集
+│   ├── 多模态RAG图文问答挑战赛训练集.json
+│   ├── 多模态RAG图文问答挑战赛测试集.json
+│   ├── 多模态RAG图文问答挑战赛提交示例.json
+│   └── 财报数据库/
+├── extract_json_array.py                  # JSON结构提取工具
+├── fitz_pipeline_all.py                   # fitz(Pymupdf)方案PDF解析脚本
+├── get_text_embedding.py                  # 文本向量化脚本
+├── image_utils/                           # 图像处理相关工具
+├── main.py                                # 入口脚本
+├── mineru_parse_pdf.py                    # MinerU PDF解析工具
+├── mineru_pipeline_all.py                 # MinerU一键式处理脚本
+├── output/                                # 输出目录
+│   └── test/
+├── pipeline_all_flow.md                   # 数据流说明
+├── pipeline_all_mermaid.md                # 流程图
+├── pyproject.toml                         # Python项目配置
+├── rag_from_page_chunks.py                # RAG检索与问答主脚本
+├── rag_top1_pred.json                     # RAG预测结果
+├── rag_top1_pred_raw.json                 # RAG原始预测结果
+└── README.md                              # 项目说明文档
 ```
+
+- 其中 `data_base_json_content/` 和 `data_base_json_page_content/` 下为每个PDF文档单独的解析/分页结果文件夹。
+- `output/` 目录下可包含评测、推理等各类输出结果。
+- `image_utils/` 目录为图片分析与处理相关的辅助脚本。
 
 > 说明：所有自动生成的json文件和中间目录已加入.gitignore，默认不会被上传到git。
 

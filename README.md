@@ -1,5 +1,8 @@
 # Multi-modal RAG 图文问答项目
 
+
+> 本项目主要在本地A6000显卡环境下运行，核心依赖本地部署的 qwen3（文本生成）和 bge-m3（文本向量化）模型。
+
 本项目旨在实现一个多模态 RAG（Retrieval-Augmented Generation）图文问答系统，支持从 PDF 文档自动解析、内容结构化、分块、向量化检索到大模型生成式问答的全流程。
 
 
@@ -85,15 +88,52 @@ multi_rag/
    - 支持自动读取测试集并输出结构化结果。
    - 支持自定义问题检索与生成。
 
+
 3. **环境变量配置**
 
    请在 `.env` 文件中配置以下内容（示例）：
    ```env
-   LOCAL_API_KEY=你的API密钥
-   LOCAL_BASE_URL=你的API地址
-   LOCAL_TEXT_MODEL=大模型名称
-   LOCAL_EMBEDDING_MODEL=嵌入模型名称
+   LOCAL_API_KEY=anything
+   LOCAL_BASE_URL=http://localhost:10002/v1
+   LOCAL_TEXT_MODEL=qwen3           # 本地大模型，推荐 qwen3
+   LOCAL_EMBEDDING_MODEL=bge-m3     # 本地embedding模型，推荐 bge-m3
    ```
+   > 推荐在A6000等高性能显卡环境下本地部署上述模型，确保推理效率。
+
+
+## 硬件资源建议
+
+本项目依赖的 MinerU PDF 解析工具对硬件有如下建议（详见 [MinerU官方文档](https://github.com/opendatalab/MinerU/blob/master/README_zh-CN.md)）：
+
+| 资源类型 | 最低要求 | 推荐配置 |
+| -------- | ----------------------------- | ----------------------------- |
+| GPU      | Turing及以后架构，6G显存以上或Apple Silicon | Turing及以后架构，8G显存以上 |
+| 内存     | 16G以上                        | 32G以上                        |
+
+也支持CPU推理，但速度会慢一些。
+
+
+## 多模态与Embedding模型API说明
+
+本项目支持多模态大模型推理，推荐如下两种方式：
+
+1. **硅基流动云API（推荐，开箱即用）**
+   - 多模态模型：如 Qwen/Qwen2.5-VL-32B-Instruct，API地址见 [硅基流动云平台](https://cloud.siliconflow.cn/i/FcjKykMn)
+   - Embedding模型：如 BAAI/bge-m3、重排序模型 BAAI/bge-reranker-v2-m3，均可免费调用
+   - 只需在 `.env` 中配置 GUIJI_API_KEY、GUIJI_BASE_URL、GUIJI_TEXT_MODEL、GUIJI_FREE_TEXT_MODEL、LOCAL_EMBEDDING_MODEL 等参数即可
+
+2. **本地xinference统一部署（高性能/隐私需求）**
+   - 支持本地多模态模型、embedding模型、mineru等一站式推理
+   - 推荐A6000等高性能显卡环境
+   - 参考 [xinference官方文档](https://inference.readthedocs.io/en/latest/) 部署
+
+> 你可以根据自身条件选择云API或本地推理，硅基流动平台和xinference均支持多模态和embedding模型。
+
+## 本地模型部署推荐
+
+本项目推荐使用 [xinference](https://inference.readthedocs.io/en/latest/) 进行本地大模型和embedding模型的统一部署与管理。
+
+请参考官方文档完成 xinference 的安装与模型加载，确保 `LOCAL_BASE_URL` 指向你的 xinference 服务地址。
 
 ## 依赖安装
 

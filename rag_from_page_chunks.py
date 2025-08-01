@@ -161,7 +161,7 @@ if __name__ == '__main__':
 
     # 控制测试时读取的题目数量，默认只随机抽取10个，实际跑全部时设为None
     TEST_SAMPLE_NUM = 10  # 设置为None则全部跑
-    FILL_UNANSWERED = True  # 新增参数，未回答的也输出默认内容
+    FILL_UNANSWERED = True  # 未回答的也输出默认内容
 
     # 批量评测脚本：读取测试集，检索+大模型生成，输出结构化结果
     test_path = os.path.join(os.path.dirname(__file__), 'datas/多模态RAG图文问答挑战赛测试集.json')

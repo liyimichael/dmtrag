@@ -1,4 +1,15 @@
-# Multi-modal RAG 图文问答项目
+
+# Spark-Multi-modal RAG 图文问答项目
+
+## 快速开始：克隆仓库
+
+你可以通过以下命令克隆本项目源码：
+
+```sh
+git clone https://github.com/li-xiu-qi/spark_multi_rag.git
+```
+
+克隆后请进入项目目录，按下文说明配置和运行。
 
 > 本项目主要在本地A6000显卡环境下运行，核心依赖本地部署的 qwen3（文本生成）和 bge-m3（文本向量化）模型。
 

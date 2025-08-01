@@ -1,16 +1,14 @@
 # Multi-modal RAG 图文问答项目
 
-
 > 本项目主要在本地A6000显卡环境下运行，核心依赖本地部署的 qwen3（文本生成）和 bge-m3（文本向量化）模型。
 
 本项目旨在实现一个多模态 RAG（Retrieval-Augmented Generation）图文问答系统，支持从 PDF 文档自动解析、内容结构化、分块、向量化检索到大模型生成式问答的全流程。
-
 
 ## 主要文件说明
 
 | 文件名 | 作用简介 |
 | ------ | ------------------------------------------------------------ |
-| pipeline_all.py | 一键式数据处理主脚本，自动完成 PDF 解析、内容结构化、分块合并 |
+| fitz_parse_pdf.py | 一键式数据处理主脚本，自动完成 PDF 解析、内容结构化、分块合并 |
 | rag_from_page_chunks.py | RAG 检索与问答主脚本，支持向量检索与大模型生成式问答 |
 | get_text_embedding.py | 文本向量化，支持批量处理 |
 | extract_json_array.py | 从大模型输出中提取 JSON 结构，保证结果可解析 |
@@ -22,28 +20,30 @@
 | data_base_json_page_content/ | 分页后的内容（中间结果） |
 | output/ | 其他输出文件目录 |
 
-
 ## 其他PDF解析方案：fitz（PyMuPDF）方案
 
 本项目也支持使用 `fitz`（PyMuPDF）库进行PDF文本解析，作为MinerU之外的另一种可选方案。
 
 - 相关脚本：`fitz_pipeline_all.py`
 - 依赖安装：
+
   ```sh
   pip install pymupdf
   ```
+
 - 用法说明：
   运行 `fitz_pipeline_all.py` 可直接遍历 `datas/` 目录下所有PDF文件，按页提取文本并生成 `all_pdf_page_chunks.json`，适用于纯文本型PDF的快速解析。
+
   ```sh
   python fitz_pipeline_all.py
   ```
+
 - 适用场景：
   - 仅需提取PDF文本内容、无需复杂版面结构还原时可选用此方案。
   - 适合大批量、纯文本PDF的快速处理。
   - 若需表格/图片/复杂结构还原，建议优先使用MinerU方案。
 
 > 注：fitz方案无需依赖GPU，适合轻量级场景。
-
 
 ## 数据准备
 
@@ -89,49 +89,49 @@ datas/
 ```
 
 > **重要提示**：使用本项目前，请确保 `datas/` 目录中包含所需的数据文件。如果没有数据，可以从以下地址下载：
-> 
-> https://challenge.xfyun.cn/topic/info?type=Multimodal-RAG-QA&option=stsj&ch=dwsf2517
-> 
+>
+> <https://challenge.xfyun.cn/topic/info?type=Multimodal-RAG-QA&option=stsj&ch=dwsf2517>
+>
 > 下载后请将数据文件复制到 `datas/` 目录中。
 
 ## 目录结构说明
 
-
-### 推荐目录结构
+### 目录结构
 
 ```
 multi_rag/
-├── all_pdf_page_chunks.json                # 所有PDF分页内容合并结果
-├── caches/                                # 缓存目录（如sqlite等）
-│   └── cache.db
-├── data_base_json_content/                # PDF解析后的内容（按文档）
-├── data_base_json_page_content/           # PDF分页内容（按文档）
+├── all_pdf_page_chunks.json                # 所有PDF分页内容合并结果，供RAG检索
+├── caches/                                # 缓存目录（如sqlite等，含cache.db等）
+├── data_base_json_content/                # 每个PDF文档解析后的内容（结构化，按文档分文件夹）
+├── data_base_json_page_content/           # 每个PDF分页内容（按文档分文件夹）
 ├── datas/                                 # 原始PDF及测试集
 │   ├── 多模态RAG图文问答挑战赛训练集.json
 │   ├── 多模态RAG图文问答挑战赛测试集.json
 │   ├── 多模态RAG图文问答挑战赛提交示例.json
-│   └── 财报数据库/
-├── extract_json_array.py                  # JSON结构提取工具
-├── fitz_pipeline_all.py                   # fitz(Pymupdf)方案PDF解析脚本
-├── get_text_embedding.py                  # 文本向量化脚本
-├── image_utils/                           # 图像处理相关工具
-├── main.py                                # 入口脚本
-├── mineru_parse_pdf.py                    # MinerU PDF解析工具
+│   └── 财报数据库/                        # 各公司研究报告PDF子目录
+├── extract_json_array.py                  # 从大模型输出中提取JSON结构的工具
+├── fitz_pipeline_all.py                   # fitz(Pymupdf)方案PDF解析脚本（纯文本PDF快速处理）
+├── get_text_embedding.py                  # 文本向量化与批量embedding脚本
+├── image_utils/                           # 图像处理与分析相关辅助脚本
+├── main.py                                # 项目主入口脚本
+├── mineru_parse_pdf.py                    # MinerU PDF解析工具（复杂结构还原）
 ├── mineru_pipeline_all.py                 # MinerU一键式处理脚本
-├── output/                                # 输出目录
+├── output/                                # 输出目录（如评测、推理、测试结果等）
 │   └── test/
-├── pipeline_all_flow.md                   # 数据流说明
-├── pipeline_all_mermaid.md                # 流程图
-├── pyproject.toml                         # Python项目配置
-├── rag_from_page_chunks.py                # RAG检索与问答主脚本
-├── rag_top1_pred.json                     # RAG预测结果
+├── pyproject.toml                         # Python项目配置文件
+├── rag_from_page_chunks.py                # RAG检索与问答主脚本（支持批量评测/交互问答）
+├── rag_top1_pred.json                     # RAG预测结果（结构化）
 ├── rag_top1_pred_raw.json                 # RAG原始预测结果
+├── __pycache__/                           # Python缓存目录
 └── README.md                              # 项目说明文档
 ```
 
-- 其中 `data_base_json_content/` 和 `data_base_json_page_content/` 下为每个PDF文档单独的解析/分页结果文件夹。
-- `output/` 目录下可包含评测、推理等各类输出结果。
+- `data_base_json_content/` 和 `data_base_json_page_content/` 下为每个PDF文档单独的解析/分页结果文件夹，便于溯源和增量处理。
+- `output/` 目录下可包含评测、推理、测试等各类输出结果。
 - `image_utils/` 目录为图片分析与处理相关的辅助脚本。
+- `caches/`、`__pycache__/` 等为缓存和Python自动生成目录。
+
+> 所有自动生成的json文件和中间目录已加入.gitignore，默认不会被上传到git。
 
 > 说明：所有自动生成的json文件和中间目录已加入.gitignore，默认不会被上传到git。
 
@@ -148,33 +148,60 @@ multi_rag/
 
 ## 使用流程
 
-1. **PDF 数据处理**
-   
-   运行 `pipeline_all.py`，自动完成：
-   - PDF → 内容结构化（content_list.json）
-   - 内容分页（page_content.json）
-   - 分块合并（all_pdf_page_chunks.json）
+1. **一键PDF数据处理**
+
+   运行 `mineru_pipeline_all.py`，自动完成：
+   - 遍历 `datas/` 目录下所有PDF，解析为结构化内容（存入 `data_base_json_content/`）
+   - 分页处理（存入 `data_base_json_page_content/`）
+   - 合并所有分页内容为 `all_pdf_page_chunks.json`，供后续RAG检索
 
    ```sh
-   python pipeline_all.py
+   python mineru_pipeline_all.py
    ```
+
+   > 如需快速处理纯文本PDF，也可用 `fitz_pipeline_all.py`，无需GPU。
 
 2. **RAG 检索与问答**
 
-   运行 `rag_from_page_chunks.py`，加载分块内容，支持批量评测和交互式问答。
+   运行 `rag_from_page_chunks.py`，加载分块内容，支持如下功能：
+   - 自动读取测试集，批量评测并输出结构化结果（如 `rag_top1_pred.json`）
+   - 支持自定义问题的检索与生成，交互式问答
 
    ```sh
    python rag_from_page_chunks.py
    ```
 
-   - 支持自动读取测试集并输出结构化结果。
-   - 支持自定义问题检索与生成。
+3. **环境变量与模型配置**
 
+   请在 `.env` 文件中配置本地或云端API参数，示例：
+
+   ```env
+   LOCAL_API_KEY=anything
+   LOCAL_BASE_URL=http://localhost:10002/v1
+   LOCAL_TEXT_MODEL=qwen3
+   LOCAL_EMBEDDING_MODEL=bge-m3
+   # 或配置硅基流动平台API参数
+   # GUIJI_API_KEY=xxx
+   # GUIJI_BASE_URL=xxx
+   # GUIJI_TEXT_MODEL=Qwen2.5-VL-32B-Instruct
+   ```
+
+   > 推荐A6000等高性能显卡本地部署。如无本地环境，也可用云API参数直接运行。
+
+4. **依赖安装**
+
+   推荐 Python 3.8+，首次运行前请安装依赖：
+
+   ```sh
+   pip install -r requirements.txt
+   ```
+
+> 以上流程涵盖了从PDF解析、内容结构化、分块、向量化检索到大模型问答的全链路。所有中间结果和输出均自动存放于对应目录，便于溯源和复用。
 
 3. **环境变量配置**
 
-
    请在 `.env` 文件中配置以下内容（示例）：
+
    ```env
    # 本地推理（推荐本地部署时使用）
    LOCAL_API_KEY=anything
@@ -185,8 +212,8 @@ multi_rag/
    # 你也可以直接将 LOCAL_API_KEY、LOCAL_BASE_URL、LOCAL_TEXT_MODEL、LOCAL_EMBEDDING_MODEL
    # 换成硅基流动平台的API参数（如GUIJI_API_KEY、GUIJI_BASE_URL、Qwen/Qwen2.5-VL-32B-Instruct等），无需本地部署也可直接运行。
    ```
-   > 推荐在A6000等高性能显卡环境下本地部署上述模型，确保推理效率。如无本地环境，也可直接用硅基流动API参数兼容运行。
 
+   > 推荐在A6000等高性能显卡环境下本地部署上述模型，确保推理效率。如无本地环境，也可直接用硅基流动API参数兼容运行。
 
 ## 硬件资源建议
 
@@ -199,13 +226,12 @@ multi_rag/
 
 也支持CPU推理，但速度会慢一些。
 
-
 ## 多模态与Embedding模型API说明
 
 本项目支持多模态大模型推理，推荐如下两种方式：
 
 1. **硅基流动云API**
-   - 多模态模型：如 Qwen/Qwen2.5-VL-32B-Instruct，API地址见 [硅基流动云平台](https://cloud.siliconflow.cn/i/FcjKykMn)
+   - 多模态模型：如 Qwen/Qwen2.5-VL-32B-Instruct，API地址见 [硅基流动](https://cloud.siliconflow.cn/i/FcjKykMn)
    - 图片视觉分析能力：pipeline_all.py 支持自动为图片补全caption，默认调用硅基流动Qwen/Qwen2.5-VL-32B-Instruct模型（无需本地部署，API Key见.env的GUIJI_API_KEY）。如需关闭图片caption补全，可在代码中设置 enable_image_caption=False。
    - Embedding模型：如 BAAI/bge-m3、重排序模型 BAAI/bge-reranker-v2-m3，均可免费调用
    - 只需在 `.env` 中配置 GUIJI_API_KEY、GUIJI_BASE_URL、GUIJI_TEXT_MODEL、GUIJI_FREE_TEXT_MODEL、LOCAL_EMBEDDING_MODEL 等参数即可
@@ -232,14 +258,13 @@ pip install -r requirements.txt
 ```
 
 ## 主要特性
+
 - 支持批量 PDF 自动解析与内容结构化
 - 支持分页内容分块与向量化检索
 - 支持大模型生成式问答，输出结构化 JSON
 - 支持多线程批量评测
 
 ## 适用场景
+
 - 金融、法律、科研等领域的 PDF 文档智能问答
 - 多文档、多页内容的高效检索与分析
-
----
-如有问题欢迎反馈与交流！

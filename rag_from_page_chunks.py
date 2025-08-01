@@ -159,33 +159,59 @@ if __name__ == '__main__':
     rag = SimpleRAG(chunk_json_path)
     rag.setup()
 
+    # 控制测试时读取的题目数量，默认只随机抽取10个，实际跑全部时设为None
+    TEST_SAMPLE_NUM = 10  # 设置为None则全部跑
+    FILL_UNANSWERED = True  # 新增参数，未回答的也输出默认内容
+
     # 批量评测脚本：读取测试集，检索+大模型生成，输出结构化结果
     test_path = os.path.join(os.path.dirname(__file__), 'datas/多模态RAG图文问答挑战赛测试集.json')
     if os.path.exists(test_path):
         with open(test_path, 'r', encoding='utf-8') as f:
             test_data = json.load(f)
         import concurrent.futures
+        import random
 
-        def process_one(idx_item):
-            idx, item = idx_item
+        # 记录所有原始索引
+        all_indices = list(range(len(test_data)))
+        # 随机抽取部分题目用于测试
+        selected_indices = all_indices
+        if TEST_SAMPLE_NUM is not None and TEST_SAMPLE_NUM > 0:
+            if len(test_data) > TEST_SAMPLE_NUM:
+                selected_indices = sorted(random.sample(all_indices, TEST_SAMPLE_NUM))
+
+        def process_one(idx):
+            item = test_data[idx]
             question = item['question']
-            tqdm.write(f"[{idx+1}/{len(test_data)}] 正在处理: {question[:30]}...")
+            tqdm.write(f"[{selected_indices.index(idx)+1}/{len(selected_indices)}] 正在处理: {question[:30]}...")
             result = rag.generate_answer(question, top_k=5)
             return idx, result
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-            results = list(tqdm(executor.map(process_one, enumerate(test_data)), total=len(test_data), desc='并发批量生成'))
+        results = []
+        if selected_indices:
+            with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+                results = list(tqdm(executor.map(process_one, selected_indices), total=len(selected_indices), desc='并发批量生成'))
+
         # 先输出一份未过滤的原始结果（含 idx）
         import json
         raw_out_path = os.path.join(os.path.dirname(__file__), 'rag_top1_pred_raw.json')
         with open(raw_out_path, 'w', encoding='utf-8') as f:
             json.dump(results, f, ensure_ascii=False, indent=2)
         print(f'已输出原始未过滤结果到: {raw_out_path}')
+
         # 只保留结果部分，并去除 retrieval_chunks 字段
+        idx2result = {idx: {k: v for k, v in r.items() if k != 'retrieval_chunks'} for idx, r in results}
         filtered_results = []
-        for _, r in sorted(results, key=lambda x: x[0]):
-            filtered = {k: v for k, v in r.items() if k != 'retrieval_chunks'}
-            filtered_results.append(filtered)
+        for idx, item in enumerate(test_data):
+            if idx in idx2result:
+                filtered_results.append(idx2result[idx])
+            elif FILL_UNANSWERED:
+                # 未被回答的，补默认内容
+                filtered_results.append({
+                    "question": item.get("question", ""),
+                    "answer": "",
+                    "filename": "",
+                    "page": "",
+                })
         # 输出结构化结果到json
         out_path = os.path.join(os.path.dirname(__file__), 'rag_top1_pred.json')
         with open(out_path, 'w', encoding='utf-8') as f:

@@ -51,7 +51,10 @@ def batch_get_embeddings(
     total = len(texts)
     if total == 0:
         return []
-    for i in tqdm(range(0, total, batch_size), desc="Embedding", unit="batch"):
+    iterator = range(0, total, batch_size)
+    if total > 1:
+        iterator = tqdm(iterator, desc="Embedding", unit="batch")
+    for i in iterator:
         batch_texts = texts[i:i + batch_size]
         response = client.embeddings.create(
             model=embedding_model,

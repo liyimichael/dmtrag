@@ -70,8 +70,6 @@ def batch_get_embeddings(
                 break
             except RateLimitError as e:
                 retry_count += 1
-                if retry_count > 10:
-                    raise
                 print(f"RateLimitError: {e}. 等待10秒后重试（第{retry_count}次）...")
                 time.sleep(10)
     return all_embeddings

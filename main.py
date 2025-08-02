@@ -1,5 +1,5 @@
 def main():
-    print("Hello from multi-rag!")
+    print("Hello from spark-multi-rag!")
 
 
 if __name__ == "__main__":

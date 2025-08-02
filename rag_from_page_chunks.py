@@ -7,9 +7,10 @@ from tqdm import tqdm
 import sys
 sys.path.append(os.path.dirname(__file__))
 from get_text_embedding import get_text_embedding
+
 from dotenv import load_dotenv
-import os
 from openai import OpenAI
+# 统一加载项目根目录的.env
 load_dotenv()
 
 class PageChunkLoader:
@@ -22,13 +23,12 @@ class PageChunkLoader:
 
 class EmbeddingModel:
     def __init__(self, batch_size: int = 64):
-        load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
         self.api_key = os.getenv('LOCAL_API_KEY')
         self.base_url = os.getenv('LOCAL_BASE_URL')
         self.embedding_model = os.getenv('LOCAL_EMBEDDING_MODEL')
         self.batch_size = batch_size
         if not self.api_key or not self.base_url:
-            raise ValueError('请在.env中配置GUIJI_API_KEY和GUIJI_BASE_URL')
+            raise ValueError('请在.env中配置LOCAL_API_KEY和LOCAL_BASE_URL')
 
     def embed_texts(self, texts: List[str]) -> List[List[float]]:
         return get_text_embedding(

@@ -54,14 +54,26 @@ def batch_get_embeddings(
     iterator = range(0, total, batch_size)
     if total > 1:
         iterator = tqdm(iterator, desc="Embedding", unit="batch")
+    import time
+    from openai import RateLimitError
     for i in iterator:
         batch_texts = texts[i:i + batch_size]
-        response = client.embeddings.create(
-            model=embedding_model,
-            input=batch_texts
-        )
-        batch_embeddings = [embedding.embedding for embedding in response.data]
-        all_embeddings.extend(batch_embeddings)
+        retry_count = 0
+        while True:
+            try:
+                response = client.embeddings.create(
+                    model=embedding_model,
+                    input=batch_texts
+                )
+                batch_embeddings = [embedding.embedding for embedding in response.data]
+                all_embeddings.extend(batch_embeddings)
+                break
+            except RateLimitError as e:
+                retry_count += 1
+                if retry_count > 3:
+                    raise
+                print(f"RateLimitError: {e}. 等待10秒后重试（第{retry_count}次）...")
+                time.sleep(10)
     return all_embeddings
 
 

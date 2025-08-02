@@ -38,6 +38,9 @@ caches/
 *.docx
 *.xlsx
 
+# Unsloth 缓存
+unsloth_compiled_cache/
+
 # JSON/数据文件
 all_pdf_page_chunks.json
 data_base_json_content/

@@ -67,3 +67,5 @@ image_utils/
 data_base_json_content/
 data_base_json_page_content/
 datas/
+
+model_train_outputs

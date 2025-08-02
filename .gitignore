@@ -68,4 +68,5 @@ data_base_json_content/
 data_base_json_page_content/
 datas/
 
-model_train_outputs
+# 模型训练输出目录
+model_train_outputs/

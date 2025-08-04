@@ -52,9 +52,9 @@ def item_to_markdown(item, enable_image_caption=True):
     """
     # 默认API参数：硅基流动Qwen/Qwen2.5-VL-32B-Instruct
     vision_provider = "guiji"
-    vision_model = "Qwen/Qwen2.5-VL-32B-Instruct"
-    vision_api_key = os.getenv("GUIJI_API_KEY")
-    vision_base_url = os.getenv("GUIJI_BASE_URL")
+    vision_model = "Pro/Qwen/Qwen2.5-VL-7B-Instruct"
+    vision_api_key = os.getenv("LOCAL_API_KEY")
+    vision_base_url = os.getenv("LOCAL_BASE_URL")
     
     if item['type'] == 'text':
         level = item.get('text_level', 0)

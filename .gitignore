@@ -61,7 +61,6 @@ output/*.json
 *.jpg
 *.jpeg
 *.gif
-image_utils/
 
 .venv/
 data_base_json_content/
@@ -70,3 +69,5 @@ datas/
 
 # 模型训练输出目录
 model_train_outputs/
+
+spark_model_train_outputs

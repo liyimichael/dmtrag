@@ -187,14 +187,10 @@ multi_rag/
    请在 `.env` 文件中配置本地或云端API参数，示例：
 
    ```env
-   LOCAL_API_KEY=anything
-   LOCAL_BASE_URL=http://localhost:10002/v1
-   LOCAL_TEXT_MODEL=qwen3
-   LOCAL_EMBEDDING_MODEL=bge-m3
-   # 或配置硅基流动平台API参数
-   # GUIJI_API_KEY=xxx
-   # GUIJI_BASE_URL=xxx
-   # GUIJI_TEXT_MODEL=Qwen2.5-VL-32B-Instruct
+   LOCAL_API_KEY=anything（基于xinference部署或者是硅基流动的api key）# your guiji api
+   LOCAL_BASE_URL=http://localhost:10002/v1（基于xinference或者是基于硅基流动的baseurl）# GUIJI_BASE_URL=https://api.siliconflow.cn/v1
+   LOCAL_TEXT_MODEL=qwen3（基于xinference或者是硅基流动的对话模型名称） # Qwen/Qwen3-8B
+   LOCAL_EMBEDDING_MODEL=bge-m3（基于xinference） # BAAI/bge-m3
    ```
 
    > 推荐A6000等高性能显卡本地部署。如无本地环境，也可用云API参数直接运行。
@@ -208,23 +204,7 @@ multi_rag/
    ```
 
 > 以上流程涵盖了从PDF解析、内容结构化、分块、向量化检索到大模型问答的全链路。所有中间结果和输出均自动存放于对应目录，便于溯源和复用。
-
-3. **环境变量配置**
-
-   请在 `.env` 文件中配置以下内容（示例）：
-
-   ```env
-   # 本地推理（推荐本地部署时使用）
-   LOCAL_API_KEY=anything
-   LOCAL_BASE_URL=http://localhost:10002/v1
-   LOCAL_TEXT_MODEL=qwen3           # 本地大模型，推荐 qwen3
-   LOCAL_EMBEDDING_MODEL=bge-m3     # 本地embedding模型，推荐 bge-m3
-   
-   # 你也可以直接将 LOCAL_API_KEY、LOCAL_BASE_URL、LOCAL_TEXT_MODEL、LOCAL_EMBEDDING_MODEL
-   # 换成硅基流动平台的API参数（如GUIJI_API_KEY、GUIJI_BASE_URL、Qwen/Qwen2.5-VL-32B-Instruct等），无需本地部署也可直接运行。
-   ```
-
-   > 推荐在A6000等高性能显卡环境下本地部署上述模型，确保推理效率。如无本地环境，也可直接用硅基流动API参数兼容运行。
+> 推荐在A6000等高性能显卡环境下本地部署上述模型，确保推理效率。如无本地环境，也可直接用硅基流动API参数兼容运行。
 
 ## 硬件资源建议
 

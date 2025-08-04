@@ -16,6 +16,7 @@ dependencies = [
     "notebook>=7.4.4",
     "ipykernel>=6.30.0",
     "pip>=25.2",
+    "unsloth>=2025.7.11",
 ]
 
 [[tool.uv.index]]

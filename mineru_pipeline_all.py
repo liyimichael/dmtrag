@@ -35,7 +35,8 @@ def parse_all_pdfs(datas_dir, output_base_dir):
             f_dump_middle_json=False,
             f_dump_model_output=False,
             f_dump_orig_pdf=False,
-            f_dump_content_list=True
+            f_dump_content_list=True,
+            table_enable=False  # 禁用表格解析
         )
         print(f"已输出: {output_dir / 'auto' / (file_name + '_content_list.json')}")
 
